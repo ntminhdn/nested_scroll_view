@@ -1,3 +1,4 @@
+import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,11 +10,11 @@ class WhatsAppAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> tabs = <String>['Tab 1', 'Tab 2', 'Tab 3', 'Tab 4'];
+    final List<String> tabs = <String>['Tab 1', 'Tab 2'];
 
     return MaterialApp(
       home: DefaultTabController(
-        length: 4,
+        length: 2,
         child: SafeArea(
           child: Container(
             constraints: const BoxConstraints.expand(),
@@ -33,7 +34,7 @@ class WhatsAppAppbar extends StatelessWidget {
                       centerTitle: false,
                       automaticallyImplyLeading: false,
                       floating: true,
-                      backgroundColor: Color.fromARGB(255, 4, 94, 84),
+                      backgroundColor: Colors.grey,
                       actions: [
                         Icon(Icons.search, size: 30, color: Colors.white),
                         SizedBox(width: 10),
@@ -55,9 +56,19 @@ class WhatsAppAppbar extends StatelessWidget {
                 body: TabBarView(
                   children: tabs.map(
                     (String name) {
-                      return const CustomScrollView(
+                      return CustomScrollView(
                         slivers: [
-                          Messages(),
+                          SliverToBoxAdapter(
+                            child: CustomPaint(
+                              size: const Size(double.infinity, 16),
+                              painter: MyCustomPainter(),
+                            ),
+                          ),
+                          const SliverPadding(
+                            padding: EdgeInsets.only(
+                                left: 14, right: 14, bottom: 14, top: 0),
+                            sliver: Messages(),
+                          ),
                         ],
                       );
                     },
@@ -72,6 +83,30 @@ class WhatsAppAppbar extends StatelessWidget {
   }
 }
 
+class MyCustomPainter extends CustomPainter {
+  final painter = Paint()..color = Colors.grey;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final leftPath = Path()
+      ..lineTo(size.height, 0)
+      ..arcToPoint(Offset(0, size.height),
+          radius: Radius.circular(size.height), clockwise: false);
+    final rightPath = Path()
+      ..moveTo(size.width, 0)
+      ..lineTo(size.width - size.height, 0)
+      ..arcToPoint(Offset(size.width, size.height),
+          radius: Radius.circular(size.height));
+    canvas.drawPath(leftPath, painter);
+    canvas.drawPath(rightPath, painter);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
 class WhatsappTabs extends SliverPersistentHeaderDelegate {
   final double size;
 
@@ -81,19 +116,26 @@ class WhatsappTabs extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: const Color.fromARGB(255, 4, 94, 84),
+      color: Colors.grey,
+      alignment: Alignment.center,
       height: size,
       child: const TabBar(
-        indicatorWeight: 3,
-        indicatorColor: Colors.white,
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.white60,
+        isScrollable: true,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BubbleTabIndicator(
+            indicatorHeight: 32.0,
+            indicatorColor: Colors.blueAccent,
+            tabBarIndicatorSize: TabBarIndicatorSize.tab,
+            // Other flags
+            // indicatorRadius: 1,
+            // insets: EdgeInsets.all(1),
+            padding: EdgeInsets.symmetric(horizontal: 30)),
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black,
         // isScrollable: true,
         tabs: <Widget>[
-          Tab(icon: Icon(Icons.camera_alt)),
-          Tab(text: "Chats"),
-          Tab(text: "Status"),
-          Tab(text: "Calls"),
+          Tab(text: "Chat"),
+          Tab(text: "Call"),
         ],
       ),
     );
@@ -123,8 +165,38 @@ class Messages extends StatelessWidget {
             return null;
           }
 
+          if (index == 0) {
+            return const ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16))),
+              tileColor: Colors.white,
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEgzwHNJhsADqquO7m7NFcXLbZdFZ2gM73x8I82vhyhg&s"),
+              ),
+              title: Text("Mr. H"),
+              subtitle: Text("Hey there, look at the appbar"),
+            );
+          } else if (index == 15) {
+            return const ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16))),
+              tileColor: Colors.white,
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEgzwHNJhsADqquO7m7NFcXLbZdFZ2gM73x8I82vhyhg&s"),
+              ),
+              title: Text("Mr. H"),
+              subtitle: Text("Hey there, look at the appbar"),
+            );
+          }
+
           return const ListTile(
-            contentPadding: EdgeInsets.all(16),
+            tileColor: Colors.white,
             leading: CircleAvatar(
               backgroundImage: NetworkImage(
                   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEgzwHNJhsADqquO7m7NFcXLbZdFZ2gM73x8I82vhyhg&s"),

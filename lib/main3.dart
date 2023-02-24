@@ -1,5 +1,7 @@
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/diagnostics.dart';
 
 void main() {
   runApp(const WhatsAppAppbar());
@@ -25,14 +27,17 @@ class WhatsAppAppbar extends StatelessWidget {
             child: Scaffold(
               backgroundColor: Colors.transparent,
               body: NestedScrollView(
+                // floatHeaderSlivers: true,
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return <Widget>[
-                    const SliverAppBar(
+                    SliverAppBar(
                       title: Text("Whatsapp"),
                       centerTitle: false,
                       automaticallyImplyLeading: false,
+                      pinned: true,
                       floating: true,
+                      // forceElevated: innerBoxIsScrolled,
                       backgroundColor: Colors.grey,
                       actions: [
                         Icon(Icons.search, size: 30, color: Colors.white),
@@ -40,21 +45,22 @@ class WhatsAppAppbar extends StatelessWidget {
                         Icon(Icons.more_vert, size: 30, color: Colors.white),
                       ],
                       elevation: 0.0,
+                      bottom: WhatsappTabs(50.0),
                     ),
                     const SliverToBoxAdapter(
                       child: SizedBox(
                         height: 5,
                       ),
                     ),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: WhatsappTabs(50.0),
-                    ),
+                    // SliverPersistentHeader(
+                    //   pinned: true,
+                    //   delegate: WhatsappTabs(50.0),
+                    // ),
                   ];
                 },
                 body: TabBarView(
                   children: tabs.map(
-                    (String name) {
+                        (String name) {
                       return CustomScrollView(
                         slivers: [
                           SliverToBoxAdapter(
@@ -106,14 +112,13 @@ class MyCustomPainter extends CustomPainter {
   }
 }
 
-class WhatsappTabs extends SliverPersistentHeaderDelegate {
+class WhatsappTabs extends StatelessWidget implements PreferredSizeWidget {
   final double size;
 
   WhatsappTabs(this.size);
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context) {
     return Container(
       color: Colors.grey,
       alignment: Alignment.center,
@@ -150,6 +155,9 @@ class WhatsappTabs extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(WhatsappTabs oldDelegate) {
     return oldDelegate.size != size;
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
 class Messages extends StatelessWidget {
@@ -159,7 +167,7 @@ class Messages extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        (context, index) {
+            (context, index) {
           if (index > 15) {
             return null;
           }

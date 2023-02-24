@@ -120,19 +120,26 @@ class PageOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: ListView(
         children: <Widget>[
           Image.asset(
-            'assets/photos/wallpaper-1.jpg',
+            'assets/img/bg.jpg',
             width: 200.0,
           ),
           Image.asset(
-            'assets/photos/wallpaper-2.jpg',
+            'assets/img/bg.jpg',
             width: 200.0,
           ),
           Image.asset(
-            'assets/photos/wallpaper-3.jpg',
+            'assets/img/bg.jpg',
+            width: 200.0,
+          ),
+          Image.asset(
+            'assets/img/bg.jpg',
+            width: 200.0,
+          ),
+          Image.asset(
+            'assets/img/bg.jpg',
             width: 200.0,
           ),
         ],
